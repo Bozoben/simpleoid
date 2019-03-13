@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -50,7 +48,7 @@ public class OpenidEndpoint {
         return "redirect:" + redirectTo;
     }
 
-    @RequestMapping("/token")
+    @RequestMapping(value = "/token", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse> token(@RequestParam String code, @RequestParam String redirect_uri) {
 
         AuthData authData = authService.consumeCode(code);
@@ -61,7 +59,7 @@ public class OpenidEndpoint {
         return new ResponseEntity<>(tokenService.buildTokenData(authData), HttpStatus.OK);
     }
 
-    @RequestMapping("/userinfo")
+    @RequestMapping(value = "/userinfo", method = RequestMethod.POST)
     public ResponseEntity userInfo(@RequestHeader String authorization) {
         // TODO : check access token
         return ResponseEntity.ok("To be implemented");
