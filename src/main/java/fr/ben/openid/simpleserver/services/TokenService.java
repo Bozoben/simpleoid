@@ -6,6 +6,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import fr.ben.openid.simpleserver.model.AuthData;
 import fr.ben.openid.simpleserver.model.TokenResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
@@ -19,16 +20,9 @@ import java.util.UUID;
 @Component
 public class TokenService {
 
+    @Value("${fr.ben.openid.sharedsecret}")
+    private String sharedSecret;
 
-    private final byte[] sharedSecret;
-
-
-    public TokenService() {
-        // Pour les besoins des tests
-        SecureRandom random = new SecureRandom();
-        sharedSecret = new byte[32];
-        random.nextBytes(sharedSecret);
-    }
 
     /**
      * Renvoit les données utiles pour le endpoint /token
@@ -54,7 +48,7 @@ public class TokenService {
      */
     private String generateIdToken(AuthData authData) {
         try {
-            JWSSigner signer = new MACSigner(sharedSecret);
+            JWSSigner signer = new MACSigner(sharedSecret.getBytes());
             // Prepare JWT with claims set
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .subject(authData.getUserid())
